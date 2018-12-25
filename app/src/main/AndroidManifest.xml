@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.example.android.mooddiary">
+    package="com.example.android.mooddiary">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".common.SleepApplication"
@@ -15,30 +15,28 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!--添加日记-->
-        <activity android:name=".diary.ui.AddDiaryActivity"
-                  android:windowSoftInputMode="adjustPan"
-        >
+        <!-- 添加日记 -->
+        <activity
+            android:name=".diary.ui.AddDiaryActivity"
+            android:windowSoftInputMode="adjustPan"></activity>
 
-        </activity>
+        <!-- 修改日记 -->
+        <activity
+            android:name=".diary.ui.UpdateDiaryActivity"
+            android:windowSoftInputMode="adjustPan" />
 
-        <!--修改日记-->
-        <activity android:name=".diary.ui.UpdateDiaryActivity"
-                  android:windowSoftInputMode="adjustPan"
-            />
-
-        <!--主界面的 Activity-->
+        <!-- 主界面的 Activity -->
         <activity android:name=".common.HomeActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!--查看图片的播放页面-->
-        <activity android:name=".picture.ui.DetailActivity"/>
-
-        <activity android:name=".common.HelloChart"/>
+        <!-- 查看图片的播放页面 -->
+        <activity android:name=".picture.ui.DetailActivity" />
+        <activity android:name=".common.HelloChart" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -49,6 +47,8 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
+        <activity android:name=".diary.ui.PictureActivity"></activity>
     </application>
 
 </manifest>

@@ -34,6 +34,7 @@ import com.example.android.mooddiary.diary.utils.Diary;
 import com.example.android.mooddiary.diary.utils.GetDate;
 import com.example.android.mooddiary.diary.utils.PictureUtils;
 import com.example.android.mooddiary.diary.widget.LinedEditText;
+import com.example.android.mooddiary.picture.ui.DetailActivity;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -84,6 +85,7 @@ public class UpdateDiaryActivity extends AppCompatActivity {
 
     private DiaryDatabaseHelper mHelper;
     private File mPhotoFile;//照片
+    private Diary diary = new Diary();
     private static final int REQUEST_PHOTO = 0;
 
     public static void startActivity(Context context, String id,String title, String content, String tag, int mood) {
@@ -179,7 +181,6 @@ public class UpdateDiaryActivity extends AppCompatActivity {
     }
 
     private void takePhoto(Intent intent) {//拍照功能
-        Diary diary = new Diary();
         diary.setId(intent.getStringExtra("uuid"));
         mPhotoFile = diary.getPhotoFile();
 
@@ -229,7 +230,7 @@ public class UpdateDiaryActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick({R.id.home_iv_draw, R.id.update_diary_fab_del, R.id.update_diary_fab_add, R.id.update_diary_fab_back})
+    @OnClick({R.id.home_iv_draw, R.id.update_diary_fab_del, R.id.update_diary_fab_add, R.id.update_diary_fab_back,R.id.item_iv_photo})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.home_iv_draw:
@@ -255,6 +256,12 @@ public class UpdateDiaryActivity extends AppCompatActivity {
                 break;
             case R.id.update_diary_fab_back:
                 finish();
+                break;
+            case R.id.item_iv_photo:
+                Intent intent = new Intent(UpdateDiaryActivity.this, PictureActivity.class);
+                String id = diary.getId();
+                intent.putExtra("uuid",id);
+                startActivity(intent);
                 break;
         }
     }

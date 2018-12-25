@@ -205,7 +205,7 @@ public class AddDiaryActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick({R.id.home_iv_draw, R.id.add_diary_fab_save, R.id.add_diary_fab_back})
+    @OnClick({R.id.home_iv_draw, R.id.add_diary_fab_save, R.id.add_diary_fab_back,R.id.item_iv_photo})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.home_iv_draw:
@@ -234,6 +234,12 @@ public class AddDiaryActivity extends AppCompatActivity {
                 break;
             case R.id.add_diary_fab_back:
                 backToDiaryFragment();
+                break;
+            case R.id.item_iv_photo:
+                Intent intent = new Intent(AddDiaryActivity.this, PictureActivity.class);
+                String uuid = mDiary.getId();
+                intent.putExtra("uuid",uuid);
+                startActivity(intent);
                 break;
         }
     }
