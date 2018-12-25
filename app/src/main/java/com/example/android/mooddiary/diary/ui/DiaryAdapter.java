@@ -17,11 +17,6 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
-/**
- * 日记界面的 Adapter
- *
- * Created by developerHaoz on 2017/5/3.
- */
 
 public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.DiaryViewHolder> {
 

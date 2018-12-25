@@ -158,6 +158,7 @@
     <orderEntry type="library" name="Gradle: com.android.support:cardview-v7-23.1.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: org.hamcrest:hamcrest-integration:1.3@jar" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: org.hamcrest:hamcrest-library:1.3@jar" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.lecho:hellocharts-library-1.5.8" level="project" />
     <orderEntry type="library" name="Gradle: cc.trity.floatingactionbutton:library-1.0.0" level="project" />
     <orderEntry type="library" name="Gradle: com.github.chrisbanes:PhotoView-1.2.6" level="project" />
     <orderEntry type="library" name="Gradle: android.arch.core:common:1.1.0@jar" level="project" />

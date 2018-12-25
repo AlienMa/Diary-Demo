@@ -28,16 +28,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.UUID;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-/**
- * 有关日记的 Fragment
- *
- * Created by developerHaoz on 2017/5/2.
- */
 
 public class DiaryFragment extends Fragment {
 
@@ -66,7 +62,7 @@ public class DiaryFragment extends Fragment {
 
     private List<Diary> mDiaryList;
     private DiaryDatabaseHelper mDatabaseHelper;
-//    private Map<String,Integer> table =new TreeMap<>();//****************
+//    private Map<String,Integer> table =new TreeMap<>();
 
     private static final String DB_DIARY_NAME = "Diary.db";
 
@@ -111,13 +107,14 @@ public class DiaryFragment extends Fragment {
 
         if (cursor.moveToFirst()) {
             do {
+                String id = cursor.getString(cursor.getColumnIndex("uuid"));
                 String date = cursor.getString(cursor.getColumnIndex("date"));
                 String title = cursor.getString(cursor.getColumnIndex("title"));
                 String content = cursor.getString(cursor.getColumnIndex("content"));
                 String tag = cursor.getString(cursor.getColumnIndex("tag"));
                 int mood = cursor.getInt(cursor.getColumnIndex("mood"));
-//                table.put(date,mood);//*************************
-                mDiaryList.add(new Diary(date, title, content, tag, mood));
+//                table.put(date,mood);
+                mDiaryList.add(new Diary(id,date, title, content, tag, mood));
 
             } while (cursor.moveToNext());
         }

@@ -141,7 +141,7 @@
                 android:layout_height="40dp"
                 android:background="@drawable/save"
                 app:fab_colorNormal="#e41c1c"
-                app:fab_icon="@drawable/back_new"
+                app:fab_icon="@drawable/undo_white_48dp"
                 app:fab_size="mini"
                 app:fab_title="FAB 2" />
 

@@ -37,6 +37,9 @@
 
         <!--查看图片的播放页面-->
         <activity android:name=".picture.ui.DetailActivity"/>
+
+        <activity android:name=".common.HelloChart"/>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.example.android.mooddiary.fileprovider"

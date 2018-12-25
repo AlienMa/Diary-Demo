@@ -1,21 +1,23 @@
 package com.example.android.mooddiary.diary.utils;
 
-import java.util.UUID;
+import android.content.Context;
+import android.os.Environment;
+
+import java.io.File;
 
 public class Diary {
-    private UUID id;
+    private String id;
     private String date;//日期
     private String title;//标题
     private String content;//内容
     private String tag;//标签
     private int mood;//
 
+    public Diary(){
+    }
 
-
-
-    public Diary(String date, String title, String content, String tag, int mood) {
-        UUID i=UUID.randomUUID();
-        this.id=i;
+    public Diary(String id,String date, String title, String content, String tag, int mood) {
+        this.id=id;
         this.date = date;
         this.title = title;
         this.content = content;
@@ -23,11 +25,11 @@ public class Diary {
         this.mood = mood;
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
     public String getTag() {
@@ -64,5 +66,14 @@ public class Diary {
 
     public String getPhotoFilename() {
         return "IMG_" + getId() + ".jpg";
+    }
+
+    public File getPhotoFile() {
+//        File filesDir = mContext.getFilesDir();
+        File filesDir = new File(Environment.getExternalStorageDirectory()+ "/MoodDiary/photos");
+        if(!filesDir.exists()){
+            filesDir.mkdirs();
+        }
+        return new File(filesDir, this.getPhotoFilename());
     }
 }

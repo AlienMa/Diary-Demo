@@ -1,12 +1,16 @@
 package com.example.android.mooddiary.diary.ui;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -28,9 +32,12 @@ import com.example.android.mooddiary.common.HomeActivity;
 import com.example.android.mooddiary.diary.db.DiaryDatabaseHelper;
 import com.example.android.mooddiary.diary.utils.Diary;
 import com.example.android.mooddiary.diary.utils.GetDate;
+import com.example.android.mooddiary.diary.utils.PictureUtils;
 import com.example.android.mooddiary.diary.widget.LinedEditText;
 
 import java.io.File;
+import java.util.List;
+import java.util.UUID;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -38,11 +45,6 @@ import butterknife.OnClick;
 import cc.trity.floatingactionbutton.FloatingActionButton;
 import cc.trity.floatingactionbutton.FloatingActionsMenu;
 
-/**
- * 添加日记的 Activity
- * <p>
- * Created by developerHaoz on 2017/5/3.
- */
 
 public class AddDiaryActivity extends AppCompatActivity {
 
@@ -72,6 +74,9 @@ public class AddDiaryActivity extends AppCompatActivity {
     FloatingActionButton addDiaryFabPhoto;
 
     private DiaryDatabaseHelper mHelper;
+    private File mPhotoFile;//照片
+    private Diary mDiary=new Diary();//日记类
+    private static final int REQUEST_PHOTO=0;
 
     public static void startActivity(Context context) {
         Intent intent = new Intent(context, AddDiaryActivity.class);
@@ -88,6 +93,16 @@ public class AddDiaryActivity extends AppCompatActivity {
         initView(intent);
         mHelper = new DiaryDatabaseHelper(this, "Diary.db", null, 1);
 
+        UUID mUUID=UUID.randomUUID();
+        String id=mUUID.toString();
+        mDiary.setId(id);
+        takePhoto();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updatePhotoView();
     }
 
     private void initToolbar() {
@@ -97,12 +112,60 @@ public class AddDiaryActivity extends AppCompatActivity {
     }
 
     private void initView(Intent intent) {
+        updatePhotoView();
         mAddDiaryEtTitle.setText(intent.getStringExtra("title"));
         mAddDiaryEtContent.setText(intent.getStringExtra("content"));
     }
 
+    private void takePhoto() {//拍照功能
+        mPhotoFile = mDiary.getPhotoFile();
 
-    @OnClick({R.id.home_iv_draw, R.id.add_diary_fab_save, R.id.add_diary_fab_back,R.id.add_diary_fab_photo})
+        final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        boolean canTakePhoto = (mPhotoFile != null);
+        addDiaryFabPhoto.setEnabled(canTakePhoto);
+
+        addDiaryFabPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri uri = FileProvider.getUriForFile(AddDiaryActivity.this,"com.example.android.mooddiary.fileprovider",mPhotoFile);
+                captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                startActivityForResult(captureImage, REQUEST_PHOTO);
+
+                List<ResolveInfo> cameraActivities = AddDiaryActivity.this
+                        .getPackageManager().queryIntentActivities(captureImage,
+                                PackageManager.MATCH_DEFAULT_ONLY);
+                for (ResolveInfo activity : cameraActivities) {
+                    AddDiaryActivity.this.grantUriPermission(activity.activityInfo.packageName,
+                            uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                }
+            }
+        });
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        if(requestCode == REQUEST_PHOTO){
+            Uri uri = FileProvider.getUriForFile(AddDiaryActivity.this,
+                    "com.example.android.mooddiary.fileprovider",mPhotoFile);
+            AddDiaryActivity.this.revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            updatePhotoView();
+        }
+    }
+
+    private void updatePhotoView(){
+        if(mPhotoFile == null || !mPhotoFile.exists()){
+            itemIvPhoto.setImageResource(R.drawable.photo_size_select_actual_white_48dp);
+        } else {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(
+                    mPhotoFile.getPath(), AddDiaryActivity.this);
+            itemIvPhoto.setImageBitmap(bitmap);
+        }
+    }
+    @OnClick({R.id.home_iv_draw, R.id.add_diary_fab_save, R.id.add_diary_fab_back})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.home_iv_draw:
@@ -113,10 +176,12 @@ public class AddDiaryActivity extends AppCompatActivity {
                 String title = mAddDiaryEtTitle.getText().toString() + "";
                 String content = mAddDiaryEtContent.getText().toString() + "";
                 int mood = moodSeekBar.getProgress();
+                String id=mDiary.getId();
 
                 if (!title.equals("") || !content.equals("")) {
                     SQLiteDatabase db = mHelper.getWritableDatabase();
                     ContentValues values = new ContentValues();
+                    values.put("uuid",id);
                     values.put("date", date);
                     values.put("title", title);
                     values.put("content", content);
@@ -130,13 +195,7 @@ public class AddDiaryActivity extends AppCompatActivity {
             case R.id.add_diary_fab_back:
                 backToDiaryFragment();
                 break;
-            case R.id.add_diary_fab_photo:
-                    takePhoto();
-                break;
         }
-    }
-    private void takePhoto(){
-
     }
     private void backToDiaryFragment() {//返回
         final String dateBack = GetDate.getDate().toString();
@@ -175,4 +234,5 @@ public class AddDiaryActivity extends AppCompatActivity {
     public void onViewClicked() {
         finish();
     }
+
 }

@@ -1,12 +1,19 @@
 package com.example.android.mooddiary.diary.ui;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -20,23 +27,22 @@ import com.example.android.mooddiary.R;
 import com.example.android.mooddiary.common.HomeActivity;
 import com.example.android.mooddiary.diary.db.DiaryDatabaseHelper;
 import com.example.android.mooddiary.diary.event.RefreshViewEvent;
+import com.example.android.mooddiary.diary.utils.Diary;
 import com.example.android.mooddiary.diary.utils.GetDate;
+import com.example.android.mooddiary.diary.utils.PictureUtils;
 import com.example.android.mooddiary.diary.widget.LinedEditText;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.io.File;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.trity.floatingactionbutton.FloatingActionButton;
 import cc.trity.floatingactionbutton.FloatingActionsMenu;
-
-/**
- * 修改日记的 Activity
- * <p>
- * Created by developerHaoz on 2017/5/3.
- */
 
 public class UpdateDiaryActivity extends AppCompatActivity {
 
@@ -68,11 +74,18 @@ public class UpdateDiaryActivity extends AppCompatActivity {
     LinearLayout mContactsTabRl;
     @Bind(R.id.mood_seekBar)
     SeekBar moodSeekBar;
+    @Bind(R.id.item_iv_photo)
+    ImageView itemIvPhoto;
+    @Bind(R.id.add_diary_fab_photo)
+    FloatingActionButton addDiaryFabPhoto;
 
     private DiaryDatabaseHelper mHelper;
+    private File mPhotoFile;//照片
+    private static final int REQUEST_PHOTO = 0;
 
-    public static void startActivity(Context context, String title, String content, String tag,int mood) {
+    public static void startActivity(Context context, String id,String title, String content, String tag, int mood) {
         Intent intent = new Intent(context, UpdateDiaryActivity.class);
+        intent.putExtra("uuid",id);
         intent.putExtra("title", title);
         intent.putExtra("content", content);
         intent.putExtra("tag", tag);
@@ -89,8 +102,15 @@ public class UpdateDiaryActivity extends AppCompatActivity {
         Intent intent = getIntent();
         initToolbar();
         initView(intent);
+        takePhoto(intent);
         Logger.d(mIvDraw.getContext() + " Activity");
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updatePhotoView();
     }
 
     private void initToolbar() {
@@ -110,7 +130,59 @@ public class UpdateDiaryActivity extends AppCompatActivity {
         mUpdateDiaryEtTitle.setText(intent.getStringExtra("title"));
         mUpdateDiaryEtContent.setText(intent.getStringExtra("content"));
         mTvTag.setText(intent.getStringExtra("tag"));
-        moodSeekBar.setProgress(intent.getIntExtra("mood",50));
+        moodSeekBar.setProgress(intent.getIntExtra("mood", 0));
+        updatePhotoView();
+    }
+
+    private void takePhoto(Intent intent) {//拍照功能
+        Diary diary = new Diary();
+        diary.setId(intent.getStringExtra("uuid"));
+        mPhotoFile = diary.getPhotoFile();
+
+        final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        boolean canTakePhoto = (mPhotoFile != null);
+        addDiaryFabPhoto.setEnabled(canTakePhoto);
+
+        addDiaryFabPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri uri = FileProvider.getUriForFile(UpdateDiaryActivity.this, "com.example.android.mooddiary.fileprovider", mPhotoFile);
+                captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                startActivityForResult(captureImage, REQUEST_PHOTO);
+
+                List<ResolveInfo> cameraActivities = UpdateDiaryActivity.this
+                        .getPackageManager().queryIntentActivities(captureImage,
+                                PackageManager.MATCH_DEFAULT_ONLY);
+                for (ResolveInfo activity : cameraActivities) {
+                    UpdateDiaryActivity.this.grantUriPermission(activity.activityInfo.packageName,
+                            uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        if(requestCode == REQUEST_PHOTO){
+            Uri uri = FileProvider.getUriForFile(UpdateDiaryActivity.this,
+                    "com.example.android.mooddiary.fileprovider",mPhotoFile);
+            UpdateDiaryActivity.this.revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            updatePhotoView();
+        }
+    }
+
+    private void updatePhotoView(){
+        if(mPhotoFile == null || !mPhotoFile.exists()){
+            itemIvPhoto.setImageResource(R.drawable.photo_size_select_actual_white_48dp);
+        } else {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(
+                    mPhotoFile.getPath(), UpdateDiaryActivity.this);
+            itemIvPhoto.setImageBitmap(bitmap);
+        }
     }
 
     @OnClick({R.id.home_iv_draw, R.id.update_diary_fab_del, R.id.update_diary_fab_add, R.id.update_diary_fab_back})
@@ -131,7 +203,7 @@ public class UpdateDiaryActivity extends AppCompatActivity {
 
                 valuesUpdate.put("title", title);
                 valuesUpdate.put("content", content);
-                valuesUpdate.put("mood",mood);
+                valuesUpdate.put("mood", mood);
                 dbUpdate.update("Diary", valuesUpdate, "title = ?", new String[]{title});
                 dbUpdate.update("Diary", valuesUpdate, "content = ?", new String[]{content});
                 dbUpdate.update("Diary", valuesUpdate, "mood = ?", new String[]{String.valueOf(mood)});

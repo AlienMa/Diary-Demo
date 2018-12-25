@@ -10,6 +10,7 @@ public class DiaryDatabaseHelper extends SQLiteOpenHelper{
 
     private static final String CREATE_DIARY = "create table Diary("
             + "id integer primary key autoincrement, "
+            + "uuid text,"
             + "date text, "
             + "title text, "
             + "tag text, "

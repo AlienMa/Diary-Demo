@@ -1,5 +1,6 @@
 package com.example.android.mooddiary.common;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.mooddiary.R;
 import com.example.android.mooddiary.common.view.CommonPagerAdapter;
@@ -21,6 +23,7 @@ import com.example.android.mooddiary.diary.utils.Diary;
 import com.example.android.mooddiary.diary.event.StartUpdateDiaryEvent;
 import com.example.android.mooddiary.diary.ui.DiaryFragment;
 import com.example.android.mooddiary.diary.ui.UpdateDiaryActivity;
+import com.example.android.mooddiary.diary.utils.PermissionUtils;
 import com.example.android.mooddiary.picture.ui.MeiziFragment;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
@@ -36,11 +39,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-/**
- * 主页面的 Activity
- * <p>
- * Created by developerHaoz
- */
 public class HomeActivity extends AppCompatActivity {
 
     @Bind(R.id.home_view_pager)
@@ -81,11 +79,29 @@ public class HomeActivity extends AppCompatActivity {
         initTabLayout();
         initViewPager();
         initToolbar();
+        permission();
+    }
+
+    private void permission() {
+            String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            String[] permissionsNeedCheck = PermissionUtils.checkPermission(this, permissions);
+            if(permissionsNeedCheck != null){
+                PermissionUtils.grantPermission(this, permissionsNeedCheck, PermissionUtils.REQUEST_GRANT_READ_AND_WRITE_EXTERNAL_STORAGE_PERMISSIONS);
+            }
     }
 
     private void initToolbar() {
         mIvDraw.setVisibility(View.GONE);
         mIvMenu.setVisibility(View.VISIBLE);
+        mIvMenu.setImageResource(R.drawable.bar_chart_white);
+        mIvMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = HelloChart.newIntent(HomeActivity.this);
+                //intent.putExtra(EXTRA_MOOD, message);
+                startActivity(intent);
+            }
+        });
         mTvCenter.setVisibility(View.VISIBLE);
         mTvNormal.setVisibility(View.GONE);
     }
@@ -143,11 +159,12 @@ public class HomeActivity extends AppCompatActivity {
     @Subscribe
     public void startUpdateDiaryActivity(StartUpdateDiaryEvent event) {
         Diary diary = event.getDiary();
+        String id=diary.getId();
         String title = diary.getTitle();
         String content = diary.getContent();
         String tag = diary.getTag();
         int mood=diary.getMood();
-        UpdateDiaryActivity.startActivity(this, title, content, tag, mood);
+        UpdateDiaryActivity.startActivity(this,id, title, content, tag, mood);
     }
 
     @Override
@@ -161,6 +178,23 @@ public class HomeActivity extends AppCompatActivity {
         super.onBackPressed();
         // TODO: 在主页面按返回键时弹出对话框，提示用户是否退出程序
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        switch (requestCode){
+            case PermissionUtils.REQUEST_GRANT_READ_AND_WRITE_EXTERNAL_STORAGE_PERMISSIONS:
+                if(PermissionUtils.isGrantedAllPermissions(permissions, grantResults)){
+                    Toast.makeText(this, "你允许了全部授权", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this,
+                            "你拒绝了部分权限，可能造成程序运行不正常", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+        }
+    }
+
 }
 
 
