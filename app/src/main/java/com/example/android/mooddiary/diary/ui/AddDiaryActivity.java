@@ -1,6 +1,5 @@
 package com.example.android.mooddiary.diary.ui;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,13 +9,13 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -28,7 +27,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.android.mooddiary.R;
-import com.example.android.mooddiary.common.HomeActivity;
 import com.example.android.mooddiary.diary.db.DiaryDatabaseHelper;
 import com.example.android.mooddiary.diary.utils.Diary;
 import com.example.android.mooddiary.diary.utils.GetDate;
@@ -75,8 +73,8 @@ public class AddDiaryActivity extends AppCompatActivity {
 
     private DiaryDatabaseHelper mHelper;
     private File mPhotoFile;//照片
-    private Diary mDiary=new Diary();//日记类
-    private static final int REQUEST_PHOTO=0;
+    private Diary mDiary = new Diary();//日记类
+    private static final int REQUEST_PHOTO = 0;
 
     public static void startActivity(Context context) {
         Intent intent = new Intent(context, AddDiaryActivity.class);
@@ -93,12 +91,53 @@ public class AddDiaryActivity extends AppCompatActivity {
         initView(intent);
         mHelper = new DiaryDatabaseHelper(this, "Diary.db", null, 1);
 
-        UUID mUUID=UUID.randomUUID();
-        String id=mUUID.toString();
+        UUID mUUID = UUID.randomUUID();
+        String id = mUUID.toString();
         mDiary.setId(id);
         takePhoto();
-    }
 
+        seekbarlisten();
+    }
+//滑动监听
+    private void seekbarlisten(){
+        moodSeekBar.getProgressDrawable().setColorFilter(Color.DKGRAY, PorterDuff.Mode.SRC_ATOP);
+        moodSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                int id = SmileId(progress);
+                Drawable drawable = getResources().getDrawable(id);//新的图片转成drawable对象
+                moodSeekBar.setThumb(drawable);//设置新的图片
+
+            }
+        });
+    }
+    //心情变化图片
+    public static int SmileId(int processed){
+        int id;
+        double flag = processed*1.0/100;
+        if(flag<0.1){
+            id=R.drawable.round_sentiment_very_dissatisfied_black_18;
+        }else if(flag>=0.1&&flag<0.2){
+            id=R.drawable.round_sentiment_dissatisfied_black_18;
+        }else if(flag>=0.2&&flag<0.4){
+            id=R.drawable.round_mood_bad_black_18;
+        }else if(flag>=0.4&&flag<0.6){
+            id=R.drawable.round_sentiment_satisfied_black_18;
+        }else if(flag>=0.6&&flag<0.8){
+            id=R.drawable.round_mood_black_18;
+        }else{
+            id=R.drawable.round_sentiment_very_satisfied_black_18;
+        }
+        return id;
+    }
     @Override
     public void onResume() {
         super.onResume();
@@ -127,7 +166,7 @@ public class AddDiaryActivity extends AppCompatActivity {
         addDiaryFabPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Uri uri = FileProvider.getUriForFile(AddDiaryActivity.this,"com.example.android.mooddiary.fileprovider",mPhotoFile);
+                Uri uri = FileProvider.getUriForFile(AddDiaryActivity.this, "com.example.android.mooddiary.fileprovider", mPhotoFile);
                 captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
                 startActivityForResult(captureImage, REQUEST_PHOTO);
 
@@ -148,16 +187,16 @@ public class AddDiaryActivity extends AppCompatActivity {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-        if(requestCode == REQUEST_PHOTO){
+        if (requestCode == REQUEST_PHOTO) {
             Uri uri = FileProvider.getUriForFile(AddDiaryActivity.this,
-                    "com.example.android.mooddiary.fileprovider",mPhotoFile);
+                    "com.example.android.mooddiary.fileprovider", mPhotoFile);
             AddDiaryActivity.this.revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             updatePhotoView();
         }
     }
 
-    private void updatePhotoView(){
-        if(mPhotoFile == null || !mPhotoFile.exists()){
+    private void updatePhotoView() {
+        if (mPhotoFile == null || !mPhotoFile.exists()) {
             itemIvPhoto.setImageResource(R.drawable.photo_size_select_actual_white_48dp);
         } else {
             Bitmap bitmap = PictureUtils.getScaledBitmap(
@@ -165,6 +204,7 @@ public class AddDiaryActivity extends AppCompatActivity {
             itemIvPhoto.setImageBitmap(bitmap);
         }
     }
+
     @OnClick({R.id.home_iv_draw, R.id.add_diary_fab_save, R.id.add_diary_fab_back})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -176,12 +216,12 @@ public class AddDiaryActivity extends AppCompatActivity {
                 String title = mAddDiaryEtTitle.getText().toString() + "";
                 String content = mAddDiaryEtContent.getText().toString() + "";
                 int mood = moodSeekBar.getProgress();
-                String id=mDiary.getId();
+                String id = mDiary.getId();
 
                 if (!title.equals("") || !content.equals("")) {
                     SQLiteDatabase db = mHelper.getWritableDatabase();
                     ContentValues values = new ContentValues();
-                    values.put("uuid",id);
+                    values.put("uuid", id);
                     values.put("date", date);
                     values.put("title", title);
                     values.put("content", content);
@@ -197,6 +237,7 @@ public class AddDiaryActivity extends AppCompatActivity {
                 break;
         }
     }
+
     private void backToDiaryFragment() {//返回
         final String dateBack = GetDate.getDate().toString();
         final String titleBack = mAddDiaryEtTitle.getText().toString();

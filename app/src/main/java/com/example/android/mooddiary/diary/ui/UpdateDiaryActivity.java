@@ -9,6 +9,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -105,8 +108,49 @@ public class UpdateDiaryActivity extends AppCompatActivity {
         takePhoto(intent);
         Logger.d(mIvDraw.getContext() + " Activity");
 
-    }
+        seekbarlisten();
 
+    }
+    //滑动监听
+    private void seekbarlisten(){
+        moodSeekBar.getProgressDrawable().setColorFilter(Color.DKGRAY, PorterDuff.Mode.SRC_ATOP);
+        moodSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                int id = SmileId(progress);
+                Drawable drawable = getResources().getDrawable(id);//新的图片转成drawable对象
+                moodSeekBar.setThumb(drawable);//设置新的图片
+
+            }
+        });
+    }
+    //心情变化图片
+    public static int SmileId(int processed){
+        int id;
+        double flag = processed*1.0/100;
+        if(flag<0.1){
+            id=R.drawable.round_sentiment_very_dissatisfied_black_18;
+        }else if(flag>=0.1&&flag<0.2){
+            id=R.drawable.round_sentiment_dissatisfied_black_18;
+        }else if(flag>=0.2&&flag<0.4){
+            id=R.drawable.round_mood_bad_black_18;
+        }else if(flag>=0.4&&flag<0.6){
+            id=R.drawable.round_sentiment_satisfied_black_18;
+        }else if(flag>=0.6&&flag<0.8){
+            id=R.drawable.round_mood_black_18;
+        }else{
+            id=R.drawable.round_sentiment_very_satisfied_black_18;
+        }
+        return id;
+    }
     @Override
     public void onResume() {
         super.onResume();
