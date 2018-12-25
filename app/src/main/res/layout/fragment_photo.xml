@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/main_rv_show_diary"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+        </android.support.v7.widget.RecyclerView>
+    </LinearLayout>
+
+    <cc.trity.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/main_fab_enter_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="46dp"
+        android:layout_marginEnd="42dp"
+        android:src="@drawable/add"
+        app:backgroundTint="#0288D1"
+        app:borderWidth="0dp"
+        app:elevation="6dp"
+        app:fabSize="normal"
+        app:layout_anchorGravity="bottom|right"
+        app:pressedTranslationZ="12dp"
+        app:rippleColor="#a6a6a6"
+        app:fab_expandDirection="left">
+        <cc.trity.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add_diary_fab_photo"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:fab_colorNormal="#5bd6fb"
+            app:fab_icon="@drawable/add_a_photo_white_48dp"
+            app:fab_size="normal" />
+
+        <cc.trity.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add_diary_fab_add_pic"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/save"
+            app:fab_colorNormal="#ffe282"
+            app:fab_icon="@drawable/add_photo_alternate_white_48dp"
+            app:fab_size="normal"
+            app:fab_title="FAB 2" />
+    </cc.trity.floatingactionbutton.FloatingActionsMenu>
+</RelativeLayout>

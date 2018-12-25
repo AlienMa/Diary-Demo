@@ -1,0 +1,116 @@
+package com.example.android.mooddiary.picture.ui;
+
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.example.android.mooddiary.R;
+import com.example.android.mooddiary.picture.api.MeiziApi;
+import com.example.android.mooddiary.picture.bean.MeiziBean;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
+/**
+ * 有关妹子的 Fragment
+ * <p>
+ * Created by developerHaoz on 2017/5/2.
+ */
+
+public class MeiziFragment extends Fragment {
+
+    @Bind(R.id.meizi_rv_show_meizi)
+    RecyclerView mRvShowMeizi;
+    @Bind(R.id.meizi_refresh)
+    SwipeRefreshLayout mRefresh;
+
+    List<MeiziBean> meiziBeanList = new ArrayList<>();
+    private static String response = "";
+
+    public static MeiziFragment newInstance() {
+        return new MeiziFragment();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_meizi, container, false);
+        ButterKnife.bind(this, view);
+        initView();
+        refreshMeizi();
+        return view;
+    }
+
+    /**
+     * 刷新当前界面
+     */
+    private void refreshMeizi() {
+        mRefresh.setColorSchemeResources(R.color.colorPrimary);
+        mRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                initView();
+                mRefresh.setRefreshing(false);
+            }
+        });
+    }
+
+    private void initView() {
+
+        Set<MeiziBean> meiziSet = new HashSet<>();
+        meiziSet.addAll(MeiziApi.getMeiziBeanList());
+        meiziBeanList.clear();
+        meiziBeanList.addAll(meiziSet);
+        Collections.shuffle(meiziBeanList);
+        mRvShowMeizi.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        mRvShowMeizi.setAdapter(new MeiziAdapter(meiziBeanList, MeiziFragment.this));
+
+//        VolleyHelper.sendHttpGet(getActivity(), MeiziApi.getMeiziApi(), new VolleyResponseCallback() {
+//            @Override
+//            public void onSuccess(String s) {
+//                response = s;
+//                meiziBeanList = GsonHelper.getMeiziBean(response);
+//                mRvShowMeizi.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+//                Collections.shuffle(meiziBeanList);
+//                mRvShowMeizi.setAdapter(new MeiziAdapter(meiziBeanList, MeiziFragment.this));
+//            }
+//
+//            @Override
+//            public void onError(VolleyError error) {
+//                Logger.d(error);
+//            }
+//        });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

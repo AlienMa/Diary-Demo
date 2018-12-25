@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: io.github.yavski:fab-speed-dial-1.0.1">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/fab-speed-dial-1.0.1.aar/e96d181bdc317c6c42c81f395052b622/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/fab-speed-dial-1.0.1.aar/e96d181bdc317c6c42c81f395052b622/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.yavski/fab-speed-dial/1.0.1/a57441ad9dfb33182dc61a04e1a72d4e2ddc4696/fab-speed-dial-1.0.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

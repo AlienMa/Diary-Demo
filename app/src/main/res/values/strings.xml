@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">MoodDiary</string>
+    <string name="drawer_open">drawer_open</string>
+    <string name="drawer_close">drawer_close</string>
+    <string name="mood_part">心情</string>
+    <string name="diary_hint_title">给日记取个标题吧！</string>
+    <string name="diary_hint_edit">今天心情如何呢</string>
+    <string name="app_toolbar_name">心情日记</string>
+</resources>

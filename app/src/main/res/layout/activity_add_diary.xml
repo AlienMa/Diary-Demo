@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:fitCenter="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_app_toolbar"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:paddingLeft="20dp"
+
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingRight="20dp"
+            android:paddingBottom="5dp"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white">
+
+                    <ImageView
+                        android:id="@+id/item_iv_photo"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:maxHeight="60dp"
+                        android:maxWidth="60dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/photo_size_select_algha"
+                        />
+                </android.support.v7.widget.CardView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <include
+                        layout="@layout/item_mood"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <EditText
+                        android:id="@+id/add_diary_et_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@drawable/shape_add_diary_title"
+                        android:layout_margin="3dp"
+                        android:enabled="true"
+                        android:gravity="top"
+                        android:hint="@string/diary_hint_title"
+                        android:maxLines="1"
+                        android:minLines="1"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="20dp"
+                        android:scrollbars="vertical"
+                        android:textSize="15sp"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <com.example.android.mooddiary.diary.widget.LinedEditText
+                android:id="@+id/add_diary_et_content"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_add_diary_title"
+                android:enabled="true"
+                android:gravity="top"
+                android:lineSpacingExtra="5dp"
+                android:maxLines="10"
+                android:minLines="8"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp"
+                android:scrollbars="vertical"
+                android:textSize="15sp"
+                android:hint="@string/diary_hint_edit"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="95dp">
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <cc.trity.floatingactionbutton.FloatingActionsMenu
+            android:id="@+id/right_labels"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="94dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            app:fab_addButtonSize="normal"
+            app:fab_colorNormal="#f0f01a"
+            app:fab_expandDirection="left">
+
+            <cc.trity.floatingactionbutton.FloatingActionButton
+                android:id="@+id/add_diary_fab_save"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:fab_colorNormal="#24d63c"
+                app:fab_icon="@drawable/save_white"
+                app:fab_size="mini" />
+
+            <cc.trity.floatingactionbutton.FloatingActionButton
+                android:id="@+id/add_diary_fab_photo"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:fab_colorNormal="#5b50e9"
+                app:fab_icon="@drawable/add_photo_alternate_white_48dp"
+                app:fab_size="mini" />
+
+            <cc.trity.floatingactionbutton.FloatingActionButton
+                android:id="@+id/add_diary_fab_back"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/save"
+                app:fab_colorNormal="#e41c1c"
+                app:fab_icon="@drawable/back_new"
+                app:fab_size="mini"
+                app:fab_title="FAB 2" />
+
+            />
+
+
+        </cc.trity.floatingactionbutton.FloatingActionsMenu>
+
+    </RelativeLayout>
+</LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
